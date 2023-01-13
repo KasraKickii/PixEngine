@@ -177,6 +177,7 @@
     <ClCompile Include="CmdVarFloat.cpp" />
     <ClCompile Include="CommandDictionary.cpp" />
     <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="PixEditor.cpp" />
     <ClCompile Include="Rasterizer.cpp" />
     <ClCompile Include="ScriptParser.cpp" />
