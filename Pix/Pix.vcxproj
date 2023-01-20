@@ -159,6 +159,9 @@
     <None Include="Scripts\3d_triangles.pix" />
     <None Include="Scripts\clipping.pix" />
     <None Include="Scripts\clipping2.pix" />
+    <None Include="Scripts\drawLine.pix" />
+    <None Include="Scripts\drawPoints.pix" />
+    <None Include="Scripts\drawTriangles.pix" />
     <None Include="Scripts\fillmode.pix" />
     <None Include="Scripts\guile.pix" />
     <None Include="Scripts\lines.pix" />
@@ -172,15 +175,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CmdDrawPixel.cpp" />
+    <ClCompile Include="CmdEndDraw.cpp" />
     <ClCompile Include="CmdSetColor.cpp" />
     <ClCompile Include="CmdSetResolution.cpp" />
     <ClCompile Include="CmdVarFloat.cpp" />
+    <ClCompile Include="CmdVertex.cpp" />
     <ClCompile Include="CommandDictionary.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="PixEditor.cpp" />
+    <ClCompile Include="PrimitivesManager.cpp" />
     <ClCompile Include="Rasterizer.cpp" />
     <ClCompile Include="ScriptParser.cpp" />
+    <ClCompile Include="CmdBeginDraw.cpp" />
     <ClCompile Include="TextEditor.cpp" />
     <ClCompile Include="VariableCache.cpp" />
     <ClCompile Include="Viewport.cpp" />
@@ -199,6 +206,11 @@
     <ClInclude Include="Command.h" />
     <ClInclude Include="CommandDictionary.h" />
     <ClInclude Include="Graphics.h" />
+    <ClInclude Include="CmdBeginDraw.h" />
+    <ClInclude Include="CmdEndDraw.h" />
+    <ClInclude Include="CmdVertex.h" />
+    <ClInclude Include="PrimitivesManager.h" />
+    <ClInclude Include="Vertex.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Vector2.h" />
