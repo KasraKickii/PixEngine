@@ -2,7 +2,7 @@
 #include "Command.h"
 
 class  CmdBeginDraw : public Command {
-	
+public:
 	const char* GetName() {
 		return "BeginDraw";
 	}

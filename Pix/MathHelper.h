@@ -17,5 +17,7 @@ namespace MathHelper {
 	float Dot(const Vector3& a, const Vector3& b);
 
 	Vector3 Cross(const Vector3& a, const Vector3& b);
+
+	bool CheckEqual(float a, float b);
 }
 

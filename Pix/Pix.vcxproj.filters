@@ -124,6 +124,9 @@
       <Filter>Commands</Filter>
     </ClCompile>
     <ClCompile Include="CmdVertex.cpp" />
+    <ClCompile Include="CmdSetFillMode.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TextEditor.h">
@@ -187,6 +190,9 @@
       <Filter>Commands</Filter>
     </ClInclude>
     <ClInclude Include="CmdVertex.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="CmdSetFillMode.h">
       <Filter>Commands</Filter>
     </ClInclude>
   </ItemGroup>
