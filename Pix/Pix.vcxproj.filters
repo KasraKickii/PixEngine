@@ -219,6 +219,9 @@
     <ClInclude Include="CmdShowViewport.h">
       <Filter>Commands</Filter>
     </ClInclude>
+    <ClInclude Include="Matrix4.h">
+      <Filter>Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Editor">

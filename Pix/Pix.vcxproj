@@ -219,6 +219,7 @@
     <ClInclude Include="CmdBeginDraw.h" />
     <ClInclude Include="CmdEndDraw.h" />
     <ClInclude Include="CmdVertex.h" />
+    <ClInclude Include="Matrix4.h" />
     <ClInclude Include="PrimitivesManager.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="MathHelper.h" />
