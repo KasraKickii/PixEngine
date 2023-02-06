@@ -1,14 +1,20 @@
 #pragma once
 #include "Command.h"
-
-class CmdSetFillMode : public Command {
+class CmdSetFillMode : public Command
+{
 public:
-	const char* GetName() {
+	const char* GetName() override
+	{
 		return "SetFillMode";
 	}
-	const char* GetDescription() {
-		return "Set the triangle fill mode";
-	}
-	bool Execute(const std::vector<std::string>& params) = 0;
-};
 
+	const char* GetDescription() override
+	{
+		return
+			"SetFillMode(fillMode)\n"
+			"\n"
+			"- Sets Rasterizer Fill Mode to fillMode.";
+	}
+
+	bool Execute(const std::vector<std::string>& params) override;
+};
