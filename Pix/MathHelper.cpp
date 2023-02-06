@@ -27,7 +27,15 @@ bool MathHelper::CheckEqual(float a, float b) {
 	Vector3 MathHelper::Normalize(const Vector3& v) {
 		return v / Magnitude(v);
 	}
-
+	Matrix4 MathHelper::Transpose(const Matrix4& m)
+	{
+		return Matrix4(
+				m._11, m._21, m._31, m._41,
+				m._12, m._22, m._32, m._42,
+				m._13, m._23, m._33, m._43,
+				m._14, m._24, m._34, m._44
+		);
+	}
 	float MathHelper::Dot(const Vector2& a, const Vector2& b) {
 		return (a.x * b.x) + (a.y * b.y);
 	}

@@ -71,12 +71,69 @@ struct Matrix4 {
 			0.0f, 0.0f, 0.0f, 1.0f
 		);
 	};
-	static Matrix4 RotationX(float rad) { const float  s = sin; };
-	static Matrix4 rotationY(float rad);
-	static Matrix4 Rotationz(float rad);
-	static Matrix4 Scale(float s);
-	static Matrix4 Scale(const Vector3& s);
-	static Matrix4 Translate(const Vector3& d);
-	static Matrix4 Translate(float dx, float dy, float dz);
+	static Matrix4 RotationX(float rad)
+	{
+		return Matrix4(
+
+					1.f,		0.f,		0.f,		0.f,
+					0.f,		cosf(rad),	sinf(rad),	0.f,
+					0.f,		-sinf(rad),	cosf(rad),	0.f,
+					0.f,		0.f,		0.f,		1.f
+		);
+	}
+	static Matrix4 RotationY(float rad)
+	{
+		return Matrix4(
+			cosf(rad),	0.f,		-sinf(rad),	0.f,
+			0.f,		1.f,		0.f,		0.f,
+			sinf(rad),	0.f,		cosf(rad),	0.f,
+			0.f,		0.f,		0.f,		1.f
+		);
+	}
+	static Matrix4 RotationZ(float rad)
+	{
+		return Matrix4(
+			cosf(rad),	sinf(rad),	0.f,		0.f,
+			-sinf(rad),	cosf(rad),	0.f,		0.f,
+			0.f,		0.f,		1.f,		0.f,
+			0.f,		0.f,		0.f,		1.f
+		);
+	}
+	static Matrix4 Scale(float s)
+	{
+		return{
+			s,		0.f,	0.f,	0.f,
+			0.f,	s,		0.f,	0.f,
+			0.f,	0.f,	s,		0.f,
+			0.f,	0.f,	0.f,	s
+		};
+	}
+	static Matrix4 Scale(const Vector3& s)
+	{
+		return Matrix4(
+			s.x,	0.f,	0.f,	0.f,
+			0.f,	s.y,	0.f,	0.f,
+			0.f,	0.f,	s.z,	0.f,
+			0.f,	0.f,	0.f,	1.0f
+		);
+	}
+	static Matrix4 Translate(const Vector3& d)
+	{
+		return Matrix4(
+			1.0f,	0.f,	0.f,	0.f,
+			0.f,	1.f,	0.f,	0.f,
+			0.f,	0.f,	1.f,	0.f,
+			d.x,	d.y,	d.z,	1.0f
+		);
+	}
+	static Matrix4 Translate(float dx, float dy, float dz)
+	{
+		return Matrix4(
+			1.0f,	0.f,	0.f,	0.f,
+			0.f,	1.f,	0.f,	0.f,
+			0.f,	0.f,	1.f,	0.f,
+			dx,		dy,		dz,		1.0f
+		);
+	}
 
 };

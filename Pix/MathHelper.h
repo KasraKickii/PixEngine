@@ -2,6 +2,8 @@
 
 #include "Vector2.h"
 #include "Vector3.h"
+#include "Matrix4.h"
+
 namespace MathHelper {
 
 	float MagnitudeSquared(const Vector2& v);
@@ -19,5 +21,12 @@ namespace MathHelper {
 	Vector3 Cross(const Vector3& a, const Vector3& b);
 
 	bool CheckEqual(float a, float b);
+
+	 Vector3 TransformCoord(const Vector3& v, const Matrix4& m);			// assume w = 1
+	 Vector3 TransformNormal(const Vector3& v, const Matrix4& m);			// assume w = 0
+	 float Determinant(const Matrix4& m);
+	 Matrix4 Adjoint(const Matrix4& m);
+	 Matrix4 Transpose(const Matrix4& m);
+	 Matrix4 Inverse(const Matrix4& m);
 }
 
