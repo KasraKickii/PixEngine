@@ -1,19 +1,25 @@
 #pragma once
-#include "Vertex.h"
+#include <vector>
+struct Vertex;
 
-class Clipper {
+class Clipper
+{
+	bool mIsClipping = false;
+
+	Clipper() {}
+
 public:
 	static Clipper* Get();
-public:
+	~Clipper() {}
 
-	void OnNewFrame();
-
-	bool ClipPoint(const Vertex& v);
-	bool ClipLine(Vertex& v0, Vertex& v1);
+	void OnNewFrame(); 
+	bool ClipPoint(Vertex& v);
+	bool ClipLine(Vertex& v1, Vertex& v2);
 	bool ClipTriangle(std::vector<Vertex>& vertices);
-	bool IsClipping() const { return mClipping; }
-	void SetClipping(bool clip) { mClipping = this; }
+	bool GetIsClipping() const;
+	void SetIsClipping(const bool isClipping);
 
 private:
-	bool mClipping = false;
+	static int GetRegionCode(const float& x, const float& y);
 };
+

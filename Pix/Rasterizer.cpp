@@ -1,4 +1,6 @@
 #include "Rasterizer.h"
+#include "DepthBuffer.h"
+#include "MathHelper.h"
 
 Rasterizer* Rasterizer::Get()
 {
@@ -10,129 +12,98 @@ void Rasterizer::SetColor(X::Color color)
 {
 	mColor = color;
 }
-void Rasterizer::SetFillMode(FillMode fillmode)
+
+void Rasterizer::SetFillMode(FillMode mode)
 {
-	mFillMode = fillmode;
+	mFillMode = mode;
 }
 void Rasterizer::DrawPoint(int x, int y)
 {
 	X::DrawPixel(x, y, mColor);
 }
-void DrawLineLow(const Vertex& left, const Vertex& right) {
-	float dx = left.pos.x - right.pos.x;
-	int startX = static_cast<int>(left.pos.x);
-	int endX = static_cast<int>(right.pos.x);
-	for (int x = startX; x < endX; x++) {
-		float t = static_cast<float>(x - startX) / dx;
-		Rasterizer::Get()->DrawPoint(LerpVertex(left, right, t));
+
+void Rasterizer::DrawPoint(Vertex v)
+{
+	if (DepthBuffer::Get()->CheckDepthBuffer(v.position.x, v.position.y, v.position.z))
+	{
+		X::DrawPixel((int)v.position.x, (int)v.position.y, v.color);
 	}
 }
-void DrawLineHigh(const Vertex& left, const Vertex& right) {
-	float dy = left.pos.y - right.pos.y;
-	int starty = static_cast<int>(left.pos.y);
-	int endy = static_cast<int>(right.pos.y);
-	for (int y = starty; y < endy; y++) {
-		float t = static_cast<float>(y - starty) / dy;
-		Rasterizer::Get()->DrawPoint(LerpVertex(left, right, t));
-	}
-}
-void Rasterizer::DrawPoint(const Vertex& vertex)
-{
-	SetColor(vertex.color);
-	DrawPoint(static_cast<int>(vertex.pos.x), static_cast<int>(vertex.pos.y));
-}
-void Rasterizer::DrawLine(const Vertex& a, const Vertex& b)
-{
-	float dx = b.pos.x - a.pos.x;
-	float dy = b.pos.y - a.pos.y;
 
-	if (MathHelper::CheckEqual(dx, 0.0f)) {
-		if (a.pos.y < b.pos.y) {
-			DrawLineHigh(a,b);
-		}
-		else {
-			DrawLineHigh(b, a);
-		}
+void Rasterizer::DrawLine(Vertex v1, Vertex v2)
+{
+	int dx = v2.position.x - v1.position.x;
+	int dy = v2.position.y - v1.position.y;
+	bool vertLine = (dx == 0);
 
+	float m{};
+	if (!vertLine) m = dy / (float)dx;
+	float t{};
+
+	if (fabs(m) <= 1 && !vertLine)
+	{
+		for (int i = 0; i <= abs(dx); ++i)
+		{
+			t = i / fabs(dx);
+			DrawPoint(Vertex::LerpVertex(v1, v2, t));
+		}
 	}
 	else
 	{
-		float m = dy / dx;
-		if (abs(m) < 1) {
-			if (a.pos.x < b.pos.x) {
-				DrawLineLow(a, b);
-			}
-			else {
-				DrawLineLow(b, a);
-			}
-
-		}
-		else
+		for (int i = 0; i <= abs(dy); ++i)
 		{
-			if (a.pos.y < b.pos.y) {
-				DrawLineLow(a, b);
-			}
-			else {
-				DrawLineLow(b, a);
-			}
+			t = i / fabs(dy);
+			DrawPoint(Vertex::LerpVertex(v1, v2, t));
 		}
-
 	}
 }
-void Rasterizer::DrawFilledTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2) {
-	float dy = v2.pos.y - v0.pos.y;
-	if (MathHelper::CheckEqual(v0.pos.y , v1.pos.y)) {
-		
-		int startY = static_cast<int>(v0.pos.y);
-		int endY = static_cast<int> (v2.pos.y);
-		for (int y = startY; y <= endY; ++y) {
-			float t = (y = v0.pos.y) / dy;
-			Vertex a = LerpVertex(v0, v2, t);
-			Vertex b = LerpVertex(v1, v2, t);
-			DrawLine(a, b);
-		}
-	}
-	else if (MathHelper::CheckEqual(v0.pos.y, v1.pos.y)) {
-		
-		int startY = static_cast<int>(v0.pos.y);
-		int endY = static_cast<int> (v2.pos.y);
-		for (int y = startY; y <= endY; ++y) {
-			float t = (y = v0.pos.y) / dy;
-			Vertex a = LerpVertex(v0, v2, t);
-			Vertex b = LerpVertex(v1, v2, t);
-			DrawLine(a, b);
-		}
-	}
-	else {
-		float t = (v1.pos.y - v0.pos.y) / dy;
-		Vertex splitVertex = LerpVertex(v0, v2, t);
-		DrawFilledTriangle(v0, v1, splitVertex);
-		DrawFilledTriangle(v1, splitVertex, v2);
 
-	}
-}
-void Rasterizer::DrawTriangle(const Vertex& a, const Vertex& b, const Vertex& c)
+void Rasterizer::DrawTriangle(Vertex v1, Vertex v2, Vertex v3)
 {
-	switch (mFillMode)
+	if (mFillMode == FillMode::Wireframe)
 	{
-	case FillMode::Solid: {
-		std::vector<Vertex> sortedVertices;
-		sortedVertices.push_back(a);
-		sortedVertices.push_back(b);
-		sortedVertices.push_back(c);
-		std::sort(sortedVertices.begin(), sortedVertices.end(), [](const Vertex& lhs, const Vertex& rhs) {return lhs.pos.y < rhs.pos.y; });
-		DrawFilledTriangle(sortedVertices[0], sortedVertices[1], sortedVertices[2]);
+		DrawLine(v1, v2);
+		DrawLine(v2, v3);
+		DrawLine(v3, v1);
+		return;
 	}
-	break;
-	case FillMode::WireFrame: {
-		DrawLine(a, b);
-		DrawLine(a, b);
-		DrawLine(a, b);
-	}
-							break;
+
+	//Sort Coners by 'y' value
+	Vertex corners[] = { v1, v2, v3 };
+	if (corners[0].position.y > corners[1].position.y)
+		std::swap(corners[0], corners[1]);
+	if (corners[0].position.y > corners[2].position.y)
+		std::swap(corners[0], corners[2]);
+	if (corners[1].position.y > corners[2].position.y)
+		std::swap(corners[1], corners[2]);
+
+	int dyLong = corners[2].position.y - corners[0].position.y;
+	int dyShort = corners[1].position.y - corners[0].position.y;
+	int dx{};
+	Vertex longSide{}, shortSide{};
+
+	for (int i = 0; i <= abs(dyLong); ++i)
+	{
+		longSide = Vertex::LerpVertex(corners[0], corners[2], i / fabs(dyLong));
+		if (i <= dyShort) 
+		{
+			if (dyShort == 0) shortSide = corners[1]; 
+			else shortSide = Vertex::LerpVertex(corners[0], corners[1], i / fabs(dyShort));
+		}
+		else 
+		{
+			if (dyLong - dyShort == 0) shortSide = corners[1];
+			else shortSide = Vertex::LerpVertex(corners[1], corners[2], (i - dyShort) / fabs(dyLong - dyShort));
+		}
+		dx = shortSide.position.x - longSide.position.x;
+		for (int j = 0; j <= abs(dx); ++j)
+		{
+			DrawPoint(Vertex::LerpVertex(longSide, shortSide, j / fabs(dx)));
+		}
 	}
 }
 
-
-
-
+X::Color Rasterizer::GetColor() const
+{
+	return mColor;
+}

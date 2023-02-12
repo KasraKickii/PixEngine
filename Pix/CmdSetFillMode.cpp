@@ -10,7 +10,7 @@ bool CmdSetFillMode::Execute(const std::vector<std::string>& params) {
 		fillmode = FillMode::Solid;
 	}
 	else if (params[0] == "wireframe") {
-		fillmode = FillMode::WireFrame;
+		fillmode = FillMode::Wireframe;
 	}
 
 	else

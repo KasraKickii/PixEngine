@@ -1,177 +1,214 @@
 #include "Clipper.h"
+#include "Vertex.h"
 #include "Viewport.h"
-const short BIT_INSIDE = 0;
-const short BIT_LEFT = 1<<1;
-const short BIT_RIGHT = 1<< 2;
-const short BIT_BOTTOM = 1<<3;
-const short BIT_TOP = 1 << 4;
+#include "PrimitivesManager.h"
+#include <iostream>
 
-enum  class ClipEdge : short
+const int CODE_INSIDE = 0;	  // 0000
+const int CODE_LEFT = 1 << 1; // 0001
+const int CODE_RIGHT = 1 << 2; // 0010
+const int CODE_BOTTOM = 1 << 3; // 0100
+const int CODE_TOP = 1 << 4; // 1000
+
+
+enum class ClipEdge : int { Left, Bottom, Right, Top, Count };
+
+bool IsInFront(ClipEdge edge, const Vector3& point)
 {
-	Left,
-	Bottom,
-	Right,
-	Top,
-	Count
-};
-bool IsInFront(ClipEdge edge, const Vector3& pos) {
+	float maxX = Viewport::Get()->GetMaxX();
+	float maxY = Viewport::Get()->GetMaxY();
+	float minX = Viewport::Get()->GetMinX();
+	float minY = Viewport::Get()->GetMinY();
+
 	switch (edge)
 	{
-	case ClipEdge::Left: return pos.x > Viewport::Get()->GetMinX();
-	case ClipEdge::Bottom: return pos.y > Viewport::Get()->GetMaxX();
-	case ClipEdge::Right: return pos.x > Viewport::Get()->GetMaxX();
-	case ClipEdge::Top: return pos.y > Viewport::Get()->GetMinY();
+	case ClipEdge::Left:	return point.x > minX;
+	case ClipEdge::Bottom:	return point.y < maxY;
+	case ClipEdge::Right:	return point.x < maxX;
+	case ClipEdge::Top:		return point.y > minY;
 	default:
 		break;
 	}
+	return false;
 }
-Vertex ComputeIntersection(ClipEdge edge, const Vertex& nVertex, const Vertex& np1Vertex) {
+
+Vertex ComputeIntersection(ClipEdge edge, const Vertex& v1, const Vertex& v2)
+{
+	float maxX = Viewport::Get()->GetMaxX();
+	float maxY = Viewport::Get()->GetMaxY();
+	float minX = Viewport::Get()->GetMinX();
+	float minY = Viewport::Get()->GetMinY();
 
 	float t = 0.0f;
 	switch (edge)
 	{
-	case ClipEdge::Left: {
-		t = (Viewport::Get()->GetMinX() - nVertex.pos.x) / (np1Vertex.pos.x - nVertex.pos.x);
-	}
+	case ClipEdge::Left:
+		t = (minX - v1.position.x) / (v2.position.x - v1.position.x);
 		break;
-	case ClipEdge::Bottom: {
-		t = (Viewport::Get()->GetMaxY() - nVertex.pos.y) / (np1Vertex.pos.y - nVertex.pos.y);
-	}
+	case ClipEdge::Bottom:
+		t = (maxY - v1.position.y) / (v2.position.y - v1.position.y);
 		break;
-	case ClipEdge::Right: {
-		t = (Viewport::Get()->GetMaxX() - nVertex.pos.x) / (np1Vertex.pos.x - nVertex.pos.x);
-	}
+	case ClipEdge::Right:
+		t = (maxX - v1.position.x) / (v2.position.x - v1.position.x);
 		break;
-	case ClipEdge::Top: {
-		t = (Viewport::Get()->GetMinY() - nVertex.pos.y) / (np1Vertex.pos.y - nVertex.pos.y);
-	}
+	case ClipEdge::Top:
+		t = (minY - v1.position.y) / (v2.position.y - v1.position.y);
 		break;
 	default:
 		break;
 	}
-	return LerpVertex(nVertex, np1Vertex, t);
+
+	return Vertex::LerpVertex(v1, v2, t);
 }
+
+
 Clipper* Clipper::Get()
 {
-	static Clipper sInstance;
-	return &sInstance;
+	static Clipper instance;
+	return &instance;
 }
 
-void Clipper::OnNewFrame() {
-	mClipping = false;
+void Clipper::OnNewFrame()
+{
 }
-short GetOutputCode(float x, float y) {
-	short code = BIT_INSIDE;
 
-	if (x < Viewport::Get()->GetMinX()) {
-		code |= BIT_LEFT;
-	}
-	else if (x > Viewport::Get()->GetMaxX()) {
-		code |= BIT_RIGHT;
-	}
-	else if (y < Viewport::Get()->GetMinY()) {
-		code |= BIT_TOP;
-	}
-	else if (y > Viewport::Get()->GetMaxY()) {
-		code |= BIT_BOTTOM;
-	}
-	return code;
-}
-bool Clipper::ClipPoint(const Vertex& v) {
-	if (!mClipping) {
+bool Clipper::ClipPoint(Vertex& v)
+{
+	if (!mIsClipping)
 		return false;
-	}
-	float maxX = Viewport::Get()->GetMaxX();
-	float maxY = Viewport::Get()->GetMaxY();
-	float minX = Viewport::Get()->GetMinX();
-	float minY = Viewport::Get()->GetMinY();
-	return v.pos.x < minX || v.pos.x> maxX
-		|| v.pos.y < minY || v.pos.y> maxY;
-}
-bool Clipper::ClipLine(Vertex& v0, Vertex& v1) {
-	if (!mClipping) {
-		return false;
-	}
-	float maxX = Viewport::Get()->GetMaxX();
-	float maxY = Viewport::Get()->GetMaxY();
-	float minX = Viewport::Get()->GetMinX();
-	float minY = Viewport::Get()->GetMinY();
-	short codeV0 = GetOutputCode(v0.pos.x, v0.pos.y);
-	short codeV1 = GetOutputCode(v1.pos.x, v1.pos.y);
-	bool cullLine = false;
 
-	while (true)
+	return !(v.position.x >= Viewport::Get()->GetMinX()
+		&& v.position.x <= Viewport::Get()->GetMaxX()
+		&& v.position.y >= Viewport::Get()->GetMinY()
+		&& v.position.y <= Viewport::Get()->GetMaxY());
+}
+
+bool Clipper::ClipLine(Vertex& v1, Vertex& v2)
+{
+	if (mIsClipping)
 	{
-		if (!(codeV0 | codeV1)) {
-			cullLine = true;
-			break;
-		}
-	else if (codeV0 & codeV1) {
-		
-			break;
-		}
-	else
+		float maxX = Viewport::Get()->GetMaxX();
+		float maxY = Viewport::Get()->GetMaxY();
+		float minX = Viewport::Get()->GetMinX();
+		float minY = Viewport::Get()->GetMinY();
+		int codeV1 = GetRegionCode(v1.position.x, v1.position.y);
+		int codeV2 = GetRegionCode(v2.position.x, v2.position.y);
+		bool accept = false;
+
+		while (true)
 		{
-			float t = 0.0f;
-			short outcodeOut = codeV1 > codeV0 ? codeV1 : codeV0;
-			if (outcodeOut & BIT_TOP) {
-				t = (minY - v0.pos.y) / (v1.pos.y - v0.pos.y);
+			if (!(codeV1 | codeV2))
+			{
+				accept = true;
+				break;
+			}
+			else if (codeV1 & codeV2)
+			{
+				break;
+			}
+			else
+			{
+				float x, y = 0.0f;
+				int outcodeOut = codeV2 > codeV1 ? codeV2 : codeV1;
 
-			}
-			else if (outcodeOut & BIT_BOTTOM) {
-				t = (maxY - v0.pos.y) / (v1.pos.y - v0.pos.y);
-
-			}
-			else if (outcodeOut & BIT_LEFT) {
-				t = (minY - v0.pos.y) / (v1.pos.y - v0.pos.y);
-
-			}
-			else if (outcodeOut & BIT_RIGHT) {
-				t = (maxY - v0.pos.y) / (v1.pos.y - v0.pos.y);
-
-			}
-			if (outcodeOut == codeV0) {
-				v0 = LerpVertex(v0, v1, t);
-				codeV0 = GetOutputCode(v0.pos.x , v0.pos.y);
-			}
-			else {
-				v1 = LerpVertex(v0, v1, t);
-				codeV1 = GetOutputCode(v1.pos.x, v1.pos.y);
+				if (outcodeOut & CODE_TOP)
+				{
+					x = v1.position.x + (v2.position.x - v1.position.x) * (maxY - v1.position.y) / (v2.position.y - v1.position.y);
+					y = maxY;
+				}
+				else if (outcodeOut & CODE_BOTTOM)
+				{
+					x = v1.position.x + (v2.position.x - v1.position.x) * (minY - v1.position.y) / (v2.position.y - v1.position.y);
+					y = minY;
+				}
+				else if (outcodeOut & CODE_RIGHT)
+				{
+					y = v1.position.y + (v2.position.y - v1.position.y) * (maxX - v1.position.x) / (v2.position.x - v1.position.x);
+					x = maxX;
+				}
+				else if (outcodeOut & CODE_LEFT)
+				{
+					y = v1.position.y + (v2.position.y - v1.position.y) * (minX - v1.position.x) / (v2.position.x - v1.position.x);
+					x = minX;
+				}
+				if (outcodeOut == codeV1)
+				{
+					v1.position.x = x;
+					v1.position.y = y;
+					codeV1 = GetRegionCode(v1.position.x, v1.position.y);
+				}
+				else
+				{
+					v2.position.x = x;
+					v2.position.y = y;
+					codeV2 = GetRegionCode(v2.position.x, v2.position.y);
+				}
 			}
 		}
+		return accept;
 	}
-	return cullLine;
+	return true;
 }
-bool Clipper::ClipTriangle(std::vector<Vertex>& vertices) {
-	if (!mClipping) {
-		return false;
-	}
-	std::vector <Vertex> newVertices;
-	for ( int i = 0; i < (int)ClipEdge::Count; i++)
-	{
-		newVertices.clear();
-		ClipEdge edge = (ClipEdge)i;
-		for (size_t n = 0; n < vertices.size(); ++n) {
-			size_t np1 = (n + 1) % vertices.size();
-			const Vertex& nVertex = vertices[n];
-			const Vertex& np1Vertex = vertices[np1];
-			bool nIsInFront = IsInFront(edge,nVertex.pos);
-			bool npIsInFront = IsInFront(edge, np1Vertex.pos);
-			if (nIsInFront && npIsInFront) {
-				newVertices.push_back(np1Vertex);
-			}
-			else if (nIsInFront && !npIsInFront) {
-				newVertices.push_back(ComputeIntersection(edge, nVertex, np1Vertex));
-			}
-			else if (!nIsInFront && !npIsInFront) {
 
+bool Clipper::ClipTriangle(std::vector<Vertex>& vertices)
+{
+	if (mIsClipping)
+	{
+		std::vector<Vertex> newVertices;
+		for (int i = 0; i < static_cast<int>(ClipEdge::Count); ++i)
+		{
+			newVertices.clear();
+			ClipEdge edge = static_cast<ClipEdge>(i);
+			for (size_t n = 0; n < vertices.size(); ++n)
+			{
+				size_t np1 = (n + 1) % vertices.size();
+				const Vertex& v1 = vertices[n];
+				const Vertex& v2 = vertices[np1];
+				bool isInFront_V1 = IsInFront(edge, v1.position);
+				bool isInFront_V2 = IsInFront(edge, v2.position);
+
+				if (isInFront_V1 && isInFront_V2)
+				{
+					newVertices.push_back(v2);
+				}
+				else if (isInFront_V1 && !isInFront_V2)
+				{
+					newVertices.push_back(ComputeIntersection(edge, v1, v2));
+				}
+				else if (!isInFront_V1 && isInFront_V2)
+				{
+					newVertices.push_back(ComputeIntersection(edge, v1, v2));
+					newVertices.push_back(v2);
+				}
 			}
-			else if (!nIsInFront && npIsInFront) {
-				newVertices.push_back(ComputeIntersection(edge, nVertex, np1Vertex));
-				newVertices.push_back(np1Vertex);
-			}
+			vertices = newVertices;
 		}
-		vertices = newVertices;
 	}
-	return newVertices.empty();
+	return true;
+}
+
+bool Clipper::GetIsClipping() const
+{
+	return mIsClipping;
+}
+
+void Clipper::SetIsClipping(const bool isClipping)
+{
+	mIsClipping = isClipping;
+}
+
+int Clipper::GetRegionCode(const float& x, const float& y)
+{
+	int code = CODE_INSIDE; 
+
+	if (x < Viewport::Get()->GetMinX()) 
+		code |= CODE_LEFT;
+	else if (x > Viewport::Get()->GetMaxX()) 
+		code |= CODE_RIGHT;
+	if (y < Viewport::Get()->GetMinY())
+		code |= CODE_BOTTOM;
+	else if (y > Viewport::Get()->GetMaxY())
+		code |= CODE_TOP;
+
+	return code;
 }

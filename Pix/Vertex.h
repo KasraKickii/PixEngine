@@ -1,33 +1,17 @@
 #pragma once
-#include "MathHelper.h"
-#include <XEngine.h>
+#include "Vector3.h"
+#include "XColors.h"
 
-struct Vertex {
-	Vector3 pos;
-	X::Color color;
+struct Vertex
+{
+    Vector3 position = { 0.f, 0.f, 0.f };
+    X::Color color = { 0.f, 0.f, 0.f, 0.f };
+    Vector3 normal = { 0.f, 0.f, 1.f, };
+    Vector3 worldPosition = { 0.f, 0.f, 0.f };
+    Vector3 worldNormal = { 0.f, 0.f, 1.f, };
+
+    static Vector3 LerpPosition(Vector3 a, Vector3 b, float t);
+    static Vector3 LerpNormal(Vector3 a, Vector3 b, float t);
+    static X::Color LerpColor(X::Color a, X::Color b, float t);
+    static Vertex LerpVertex(Vertex a, Vertex b, float t);
 };
-
-inline Vector3 Lerposition(const Vector3& a, const Vector3& b, float t){
-
-	return Vector3(
-		a.x + (b.x - a.x) * t,
-		a.y + (b.y - a.y) * t,
-		a.z + (b.z - a.z) * t
-		);
-	}
-inline X::Color LerpColor(const X::Color& a, const X::Color& b, float t) {
-
-	return X::Color(
-		a.r + (b.r - a.r) * t,
-		a.g + (b.g - a.g) * t,
-		a.b + (b.b - a.b) * t,
-		a.w + (b.w - a.w) * t
-	);
-}
-inline Vertex LerpVertex(const Vertex& a, const Vertex b, float t) {
-
-	Vertex ret;
-	ret.pos = Lerposition(a.pos, b.pos, t);
-	ret.color = LerpColor(a.color, b.color, t);
-	return ret;
-}

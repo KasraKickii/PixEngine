@@ -8,6 +8,6 @@ bool CmdSetClipping::Execute(const std::vector<std::string>& params)
 		return false;
 
 	bool setClipping = params[0] == "true";
-	Clipper::Get()->SetClipping(setClipping);
+	Clipper::Get()->SetIsClipping(setClipping);
 	return true;
 }

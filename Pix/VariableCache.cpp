@@ -32,14 +32,15 @@ void VariableCache::AddFloat(const std::string& name, float value, float speed, 
 	}
 }
 
+
 float VariableCache::GetFloat(const std::string& param)
 {
 	if (IsVarName(param))
 	{
 		auto iter = std::find_if(mFloatVars.begin(), mFloatVars.end(), [param](auto& var)
-		{
-			return var.name == param;
-		});
+			{
+				return var.name == param;
+			});
 		if (iter != mFloatVars.end())
 		{
 			return (*iter).value;
@@ -48,6 +49,7 @@ float VariableCache::GetFloat(const std::string& param)
 
 	return stof(param);
 }
+
 
 void VariableCache::ShowEditor()
 {

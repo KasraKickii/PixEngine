@@ -1,57 +1,162 @@
 #include "PrimitivesManager.h"
 #include "Rasterizer.h"
 #include "Clipper.h"
-PrimitivesManager* PrimitivesManager::Get() {
-	static PrimitivesManager sInstance;
-	return &sInstance;
+#include "Matrix4.h"
+#include "MatrixStack.h";
+#include "Camera.h"
+#include "MathHelper.h"
+extern float gResolutionX;
+extern float gResolutionY;
 
+namespace
+{
+	Matrix4 GetScreenTransform()
+	{
+		float hw = gResolutionX * 0.5f;
+		float hh = gResolutionY * 0.5f;
+		return{
+			hw,		0.0f,	0.0f,	0.0f,
+			0.0f,	-hh,	0.0f,	0.0f,
+			0.0f,	0.0f,	1.0f,	0.0f,
+			hw,		hh,		0.0f,	1.0f
+		};
+	}
 }
 
-bool PrimitivesManager::BeginDraw(Topology topology) {
-	mDrawBegin = true;
-	mTopology = topology;
-	mVertexBuffer.clear();
+PrimitivesManager* PrimitivesManager::Get()
+{
+	static PrimitivesManager instance;
+	return &instance;
+}
+
+void PrimitivesManager::OnNewFrame()
+{
+	mCorrectUV = true;
+}
+
+bool PrimitivesManager::BeginDraw(Topology topology, bool applyTransform)
+{
+	_vertexBuffer.clear();
+	_topology = topology;
+	_applyTransform = applyTransform;
+
 	return true;
 }
 
-void PrimitivesManager::AddVertex(const Vertex& vertex){
-
-	if (mDrawBegin) {
-		mVertexBuffer.push_back(vertex);
-	}
+void PrimitivesManager::AddVertex(Vertex vertex)
+{
+	_vertexBuffer.push_back(vertex);
 }
-bool PrimitivesManager::EndDraw() {
 
-	if (!mDrawBegin) {
-		return false;
-	}
-	switch (mTopology)
+bool PrimitivesManager::EndDraw()
+{
+	switch (_topology)
 	{
 	case Topology::Point:
-		for (size_t i = 0; i < mVertexBuffer.size(); ++i) {
-			if (!Clipper::Get()->ClipPoint(mVertexBuffer[i])) {
-				Rasterizer::Get()->DrawPoint(mVertexBuffer[i]);
-			}
+		for (int i = 0; i < _vertexBuffer.size(); ++i)
+		{
+			if (!Clipper::Get()->ClipPoint(_vertexBuffer[i]))
+				Rasterizer::Get()->DrawPoint(_vertexBuffer[i]);
 		}
 		break;
 	case Topology::Line:
-		for (size_t i = 1; i < mVertexBuffer.size(); i += 2) {
-			Rasterizer::Get()->DrawLine(mVertexBuffer[i - 1], mVertexBuffer[i]);
+		for (int i = 1; i < _vertexBuffer.size(); i += 2)
+		{
+			if (Clipper::Get()->ClipLine(_vertexBuffer[i - 1], _vertexBuffer[i]))
+				Rasterizer::Get()->DrawLine(_vertexBuffer[i - 1], _vertexBuffer[i]);
 		}
 		break;
 	case Topology::Triangle:
-		for (size_t i = 2; i < mVertexBuffer.size(); i += 3) {
-			std::vector<Vertex> triangle = { mVertexBuffer[i - 2], mVertexBuffer[i - 1], mVertexBuffer[i] };
-			if (!Clipper::Get()->ClipTriangle(triangle)) {
-				for (size_t v = 2; v < triangle.size(); ++v) {
-					Rasterizer::Get()->DrawTriangle(mVertexBuffer[i - 2], mVertexBuffer[i - 1], mVertexBuffer[i]);
+	{
+		Matrix4 matWorld = MatrixStack::Get()->GetTransform();
+		Matrix4 matView = Camera::Get()->GetViewMatrix();
+		Matrix4 matProj = Camera::Get()->GetProjectionMatrix();
+		Matrix4 matScreen = GetScreenTransform();
+		Matrix4 matFinal = matProj * matScreen;
+
+		for (int i = 2; i < _vertexBuffer.size(); i += 3)
+		{
+			std::vector<Vertex> triangle = { _vertexBuffer[i - 2], _vertexBuffer[i - 1], _vertexBuffer[i] };
+			if (_applyTransform)
+			{
+				if (MathHelper::MagnitudeSquared(triangle[0].normal) < 0.5f)
+				{
+					Vector3 faceNorm = MathHelper::Normalize(MathHelper::Cross((triangle[1].position - triangle[0].position),
+						(triangle[2].position - triangle[0].position)));
+					for (auto& v : triangle)
+						v.normal = faceNorm;
+				}
+				for (auto& v : triangle)
+				{
+					v.position = MathHelper::TransformCoord(v.position, matWorld);
+					v.normal = MathHelper::TransformNormal(v.normal, matWorld);
+					v.worldPosition = v.position;
+					v.worldNormal = v.normal;
+				}
+				if (mCullMode != CullMode::None)
+				{
+					for (auto& v : triangle)
+					{
+						v.position = MathHelper::TransformCoord(v.position, matView);
+						v.normal = MathHelper::TransformNormal(v.normal, matView);
+					}
+
+					if (mCorrectUV && triangle[0].color.z < 0.f)
+					{
+						for (auto& v : triangle)
+						{
+							v.color.x /= v.position.z;
+							v.color.y /= v.position.z;
+							v.color.w = 1.f / v.position.z;
+						}
+					}
+					Vector3 faceNorm = MathHelper::Cross((triangle[1].position - triangle[0].position),
+						(triangle[2].position - triangle[0].position));
+
+					if (mCullMode == CullMode::Back && faceNorm.z > 0.f)
+					{
+						continue;
+					}
+					else if (mCullMode == CullMode::Front && faceNorm.z < 0.f)
+					{
+						continue;
+					}
+				}
+
+				for (auto& v : triangle)
+				{
+					auto posScreen = MathHelper::TransformCoord(v.position, matScreen);
+					v.position = posScreen;
+				}
+			}
+			if (Clipper::Get()->ClipTriangle(triangle))
+			{
+				for (int j = 2; j < triangle.size(); ++j)
+				{
+					Rasterizer::Get()->DrawTriangle(triangle[0], triangle[j - 1], triangle[j]);
 				}
 			}
 		}
 		break;
+	}
 	default:
 		return false;
 	}
-	mDrawBegin = false;
+
 	return true;
-};
+}
+
+void PrimitivesManager::SetCullMode(const CullMode cm)
+{
+	mCullMode = cm;
+}
+
+CullMode PrimitivesManager::GetCullMode() const
+{
+	return mCullMode;
+}
+
+void PrimitivesManager::SetCorrectUV(bool setTo)
+{
+	mCorrectUV = setTo;
+}
