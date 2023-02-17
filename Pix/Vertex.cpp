@@ -1,8 +1,6 @@
 #include "Vertex.h"
 #include "MathHelper.h"
 #include <iostream>
-
-
 Vector3 Vertex::LerpPosition(Vector3 a, Vector3 b, float t)
 {
     Vector3 lerp;
@@ -36,6 +34,5 @@ Vertex Vertex::LerpVertex(Vertex a, Vertex b, float t)
     Vertex lerp;
     lerp.position = LerpPosition(a.position, b.position, t);
     lerp.color = LerpColor(a.color, b.color, t);
-
     return lerp;
 }
