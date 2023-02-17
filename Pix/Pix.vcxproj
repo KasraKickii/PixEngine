@@ -177,14 +177,19 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Clipper.cpp" />
     <ClCompile Include="CmdDrawPixel.cpp" />
+    <ClCompile Include="CmdEnableDepth.cpp" />
     <ClCompile Include="CmdEndDraw.cpp" />
+    <ClCompile Include="CmdPopMatrix.cpp" />
     <ClCompile Include="CmdPushRotationX.cpp" />
     <ClCompile Include="CmdPushRotationY.cpp" />
     <ClCompile Include="CmdPushRotationZ.cpp" />
     <ClCompile Include="CmdPushScaling.cpp" />
     <ClCompile Include="CmdPushTranslation.cpp" />
+    <ClCompile Include="CmdSetCameraDirection.cpp" />
+    <ClCompile Include="CmdSetCameraPosition.cpp" />
     <ClCompile Include="CmdSetClipping.cpp" />
     <ClCompile Include="CmdSetColor.cpp" />
+    <ClCompile Include="CmdSetCullMode.cpp" />
     <ClCompile Include="CmdSetFillMode.cpp" />
     <ClCompile Include="CmdSetResolution.cpp" />
     <ClCompile Include="CmdSetViewport.cpp" />
@@ -204,6 +209,7 @@
     <ClCompile Include="CmdBeginDraw.cpp" />
     <ClCompile Include="TextEditor.cpp" />
     <ClCompile Include="VariableCache.cpp" />
+    <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="Viewport.cpp" />
     <ClCompile Include="WinMain.cpp" />
   </ItemGroup>
@@ -216,13 +222,18 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Clipper.h" />
     <ClInclude Include="CmdDrawPixel.h" />
+    <ClInclude Include="CmdEnableDepth.h" />
+    <ClInclude Include="CmdPopMatrix.h" />
     <ClInclude Include="CmdPushRotationX.h" />
     <ClInclude Include="CmdPushRotationY.h" />
     <ClInclude Include="CmdPushRotationZ.h" />
     <ClInclude Include="CmdPushScaling.h" />
     <ClInclude Include="CmdPushTranslation.h" />
+    <ClInclude Include="CmdSetCameraDirection.h" />
+    <ClInclude Include="CmdSetCameraPosition.h" />
     <ClInclude Include="CmdSetClipping.h" />
     <ClInclude Include="CmdSetColor.h" />
+    <ClInclude Include="CmdSetCullMode.h" />
     <ClInclude Include="CmdSetFillMode.h" />
     <ClInclude Include="CmdSetResolution.h" />
     <ClInclude Include="CmdSetViewport.h" />

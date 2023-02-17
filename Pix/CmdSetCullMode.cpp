@@ -1,5 +1,5 @@
 #include "CmdSetCullMode.h"
-#include "PrimativeManager.h"
+#include "PrimitivesManager.h"
 
 bool CmdSetCullMode::Execute(const std::vector<std::string>& params)
 {
@@ -7,11 +7,11 @@ bool CmdSetCullMode::Execute(const std::vector<std::string>& params)
 		return false;
 
 	if (params[0] == "none" || params[0] == "None")
-		PrimativeManager::Get()->SetCullMode(CullMode::None);
+		PrimitivesManager::Get()->SetCullMode(CullMode::None);
 	else if (params[0] == "back" || params[0] == "Back")
-		PrimativeManager::Get()->SetCullMode(CullMode::Back);
+		PrimitivesManager::Get()->SetCullMode(CullMode::Back);
 	else if (params[0] == "front" || params[0] == "Front")
-		PrimativeManager::Get()->SetCullMode(CullMode::Front);
+		PrimitivesManager::Get()->SetCullMode(CullMode::Front);
 
 
 	return true;
