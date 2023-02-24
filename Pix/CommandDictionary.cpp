@@ -1,5 +1,4 @@
 #include "CommandDictionary.h"
-
 #include "CmdDrawPixel.h"
 #include "CmdSetResolution.h"
 #include "CmdVarBool.h"
@@ -22,6 +21,9 @@
 #include "CmdSetCameraDirection.h"
 #include "CmdSetCullMode.h"
 #include "CmdEnableDepth.h"
+#include "CmdLights.h"
+#include "CmdModel.h"
+#include "CmdSetShadeMode.h"
 
 CommandDictionary* CommandDictionary::Get()
 {

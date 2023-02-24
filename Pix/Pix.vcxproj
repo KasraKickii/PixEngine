@@ -179,6 +179,7 @@
     <ClCompile Include="CmdDrawPixel.cpp" />
     <ClCompile Include="CmdEnableDepth.cpp" />
     <ClCompile Include="CmdEndDraw.cpp" />
+    <ClCompile Include="CmdModel.cpp" />
     <ClCompile Include="CmdPopMatrix.cpp" />
     <ClCompile Include="CmdPushRotationX.cpp" />
     <ClCompile Include="CmdPushRotationY.cpp" />
@@ -192,6 +193,7 @@
     <ClCompile Include="CmdSetCullMode.cpp" />
     <ClCompile Include="CmdSetFillMode.cpp" />
     <ClCompile Include="CmdSetResolution.cpp" />
+    <ClCompile Include="CmdSetShadeMode.cpp" />
     <ClCompile Include="CmdSetViewport.cpp" />
     <ClCompile Include="CmdShowViewport.cpp" />
     <ClCompile Include="CmdVarBool.cpp" />
@@ -200,6 +202,8 @@
     <ClCompile Include="CommandDictionary.cpp" />
     <ClCompile Include="DepthBuffer.cpp" />
     <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="LightManager.cpp" />
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="MatrixStack.cpp" />
     <ClCompile Include="PixEditor.cpp" />
@@ -223,6 +227,7 @@
     <ClInclude Include="Clipper.h" />
     <ClInclude Include="CmdDrawPixel.h" />
     <ClInclude Include="CmdEnableDepth.h" />
+    <ClInclude Include="CmdModel.h" />
     <ClInclude Include="CmdPopMatrix.h" />
     <ClInclude Include="CmdPushRotationX.h" />
     <ClInclude Include="CmdPushRotationY.h" />
@@ -236,6 +241,7 @@
     <ClInclude Include="CmdSetCullMode.h" />
     <ClInclude Include="CmdSetFillMode.h" />
     <ClInclude Include="CmdSetResolution.h" />
+    <ClInclude Include="CmdSetShadeMode.h" />
     <ClInclude Include="CmdSetViewport.h" />
     <ClInclude Include="CmdShowViewport.h" />
     <ClInclude Include="CmdVarBool.h" />
@@ -247,6 +253,8 @@
     <ClInclude Include="CmdBeginDraw.h" />
     <ClInclude Include="CmdEndDraw.h" />
     <ClInclude Include="CmdVertex.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="LightManager.h" />
     <ClInclude Include="Matrix4.h" />
     <ClInclude Include="MatrixStack.h" />
     <ClInclude Include="PrimitivesManager.h" />
