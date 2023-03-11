@@ -1,23 +1,22 @@
 #include "CmdBeginDraw.h"
-#include "PrimitivesManager.h"
-bool CmdBeginDraw::Execute(const std::vector<std::string>& params) {
-	if (params.size() < 1) {
-		return false;
-	}
-	Topology topology = Topology::Point;
-	if (params[0] == "point") {
-		topology = Topology::Point;
-	}
-	else if (params[0] == "line") {
-		topology = Topology::Line;
-	}
-	else if (params[0] == "triangle") {
-		topology = Topology::Triangle;
-	}
-	else
-	{
-		return false;
-	}
-	bool applyTransform = (params.size() > 1 && params[1] == "true");
-	return PrimitivesManager::Get()->BeginDraw(topology);
+#include "PrimativeManager.h"
+
+bool CmdBeginDraw::Execute(const std::vector<std::string>& params)
+{
+    Topology top = Topology::Point;
+    bool applyTransform = false;
+    if (params.size() >= 1)
+    {
+        if (params[0] == "line" || params[0] == "Line")
+            top = Topology::Line;
+        else if (params[0] == "triangle" || params[0] == "Triangle"
+            || params[0] == "tri" || params[0] == "Tri")
+            top = Topology::Triangle;
+        //else stay as Topology::Point;
+
+        if (params.size() >= 2 && params[1] == "true")
+            applyTransform = true;
+    }
+
+    return PrimativeManager::Get()->BeginDraw(top, applyTransform);
 }

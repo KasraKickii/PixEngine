@@ -1,11 +1,13 @@
 #include "CmdSetClipping.h"
 #include "Clipper.h"
+
 bool CmdSetClipping::Execute(const std::vector<std::string>& params)
 {
-	if (params.size() < 1)
-		return false;
+	bool setTo = false;
+	if (params.size() > 0)
+		if (params[0] == "true")
+			setTo = true;
 
-	bool setClipping = params[0] == "true";
-	Clipper::Get()->SetIsClipping(setClipping);
+	Clipper::Get()->SetIsClipping(setTo);
 	return true;
 }

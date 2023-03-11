@@ -1,4 +1,5 @@
 #include "CommandDictionary.h"
+
 #include "CmdDrawPixel.h"
 #include "CmdSetResolution.h"
 #include "CmdVarBool.h"
@@ -51,6 +52,14 @@ CommandDictionary::CommandDictionary()
 	RegisterCommand<CmdSetCameraDirection>();
 	RegisterCommand<CmdSetCullMode>();
 	RegisterCommand<CmdEnableDepth>();
+	RegisterCommand<CmdSetLightAmbient>();
+	RegisterCommand<CmdSetLightDiffuse>();
+	RegisterCommand<CmdSetLightSpecular>();
+	RegisterCommand<CmdAddDirectionalLight>();
+	RegisterCommand<CmdAddPointLight>();
+	RegisterCommand<CmdModel>();
+	RegisterCommand<CmdSetShadeMode>();
+
 	// Variable commands
 	RegisterCommand<CmdVarBool>();
 	RegisterCommand<CmdVarFloat>();
@@ -71,7 +80,7 @@ TextEditor::LanguageDefinition CommandDictionary::GenerateLanguageDefinition()
 
 	langDef.mKeywords.insert("var");
 
-	for (auto& [keyword, command] : mCommandMap)
+	for (auto&[keyword, command] : mCommandMap)
 	{
 		TextEditor::Identifier id;
 		id.mDeclaration = command->GetDescription();

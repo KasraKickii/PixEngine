@@ -19,27 +19,27 @@ void Camera::OnNewFrame()
 	mFOV = 1.57f;
 }
 
-void Camera::SetPosition(const Vector3& pos)
+void Camera::SetPosition(const Vector3 pos)
 {
 	mPosition = pos;
 }
 
-void Camera::SetDirection(const Vector3& dir)
+void Camera::SetDirection(const Vector3 dir)
 {
 	mDirection = dir;
 }
 
-void Camera::SetNearPlane(float nPlane)
+void Camera::SetNearPlane(const float nPlane)
 {
 	mNearPlane = nPlane;
 }
 
-void Camera::SetFarPlane(float fPlane)
+void Camera::SetFarPlane(const float fPlane)
 {
 	mFarPlane = fPlane;
 }
 
-void Camera::SetFOV(float fov)
+void Camera::SetFOV(const float fov)
 {
 	mFOV = fov;
 }

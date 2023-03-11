@@ -5,8 +5,10 @@
 
 #include "PixEditor.h"
 
-int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
+//int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
+int main()
 {
+	// Start Pix Editor
 	PixEditor editor;
 
 	X::Start("xconfig.json");

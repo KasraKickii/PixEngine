@@ -1,19 +1,19 @@
 #pragma once
 #include "Command.h"
-class CmdVertex : public Command
+class CmdCorrectUV : public Command
 {
 public:
 	const char* GetName() override
 	{
-		return "Vertex";
+		return "CorrectUV";
 	}
 
 	const char* GetDescription() override
 	{
 		return
-			"Vertex(x, y, z, [r, g, b, [a]])\n"
+			"CorrectUV(setTo)\n"
 			"\n"
-			"- Adds vertex to buffer at position (x, y, z) with color.";
+			"- Use UV of colors.";
 	}
 
 	bool Execute(const std::vector<std::string>& params) override;

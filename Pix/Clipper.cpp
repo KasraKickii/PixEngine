@@ -1,7 +1,7 @@
 #include "Clipper.h"
 #include "Vertex.h"
 #include "Viewport.h"
-#include "PrimitivesManager.h"
+#include "PrimativeManager.h"
 #include <iostream>
 
 const int CODE_INSIDE = 0;	  // 0000
@@ -11,7 +11,7 @@ const int CODE_BOTTOM = 1 << 3; // 0100
 const int CODE_TOP = 1 << 4; // 1000
 
 
-enum class ClipEdge : int { Left, Bottom, Right, Top, Count };
+enum class ClipEdge : int {Left, Bottom, Right, Top, Count};
 
 bool IsInFront(ClipEdge edge, const Vector3& point)
 {
@@ -199,15 +199,15 @@ void Clipper::SetIsClipping(const bool isClipping)
 
 int Clipper::GetRegionCode(const float& x, const float& y)
 {
-	int code = CODE_INSIDE; 
+	int code = CODE_INSIDE; // Center
 
-	if (x < Viewport::Get()->GetMinX()) 
+	if (x < Viewport::Get()->GetMinX()) //Left
 		code |= CODE_LEFT;
-	else if (x > Viewport::Get()->GetMaxX()) 
+	else if (x > Viewport::Get()->GetMaxX()) //Right
 		code |= CODE_RIGHT;
-	if (y < Viewport::Get()->GetMinY())
+	if (y < Viewport::Get()->GetMinY())//Below
 		code |= CODE_BOTTOM;
-	else if (y > Viewport::Get()->GetMaxY())
+	else if (y > Viewport::Get()->GetMaxY())//Above
 		code |= CODE_TOP;
 
 	return code;

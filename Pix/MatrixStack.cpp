@@ -50,9 +50,16 @@ void MatrixStack::PushScaling(const Vector3 s)
 
 void MatrixStack::PopMatrix()
 {
-    if (!mMatrices.empty()) {
-        Matrix4 last = mMatrices.back();
-        mMatrices.pop_back();
-        mCombinedTransfrom = MathHelper::Inverse(last) * mCombinedTransfrom;
+    Matrix4 last = mMatrices.back();
+    mMatrices.pop_back();
+    mCombinedTransfrom = MathHelper::Inverse(last) * mCombinedTransfrom;
+}
+
+void MatrixStack::GenerateCombinedMatrix()
+{
+    mCombinedTransfrom = Matrix4::Identity();
+    for (Matrix4 m : mMatrices)
+    {
+        mCombinedTransfrom = m * mCombinedTransfrom;
     }
 }

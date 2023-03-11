@@ -15,6 +15,6 @@ bool CmdVarBool::Execute(const std::vector<std::string>& params)
 	const bool value = params[2] == "true" ? true : false;
 
 	// Register variable
-	vc->AddFloat(params[0], value);
+	vc->AddBool(params[0], value);
 	return true;
 }

@@ -122,12 +122,12 @@ Matrix4 MathHelper::Inverse(Matrix4 m)
 
 float MathHelper::Deg2Rad(float deg)
 {
-	return (deg * (PI / 180.f));
+	return (deg * (PI/180.f));
 }
 
 float MathHelper::Rad2Deg(float rad)
 {
-	return (rad * (180.f / PI));
+	return (rad * (180.f/PI));
 }
 
 bool MathHelper::CheckEquals(float a, float b)

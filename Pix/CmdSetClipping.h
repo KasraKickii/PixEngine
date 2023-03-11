@@ -1,7 +1,5 @@
 #pragma once
-
 #include "Command.h"
-
 class CmdSetClipping : public Command
 {
 public:
@@ -13,10 +11,11 @@ public:
 	const char* GetDescription() override
 	{
 		return
-			"SetClipping(enabled)\n"
+			"SetClipping(bool)\n"
 			"\n"
-			"- Enables or disables clipping.";
+			"- Sets whether geometry is clipped to the viewport based on bool\n";
 	}
 
 	bool Execute(const std::vector<std::string>& params) override;
 };
+

@@ -6,7 +6,7 @@ DepthBuffer* DepthBuffer::Get()
 {
 	static DepthBuffer sInstance;
 	return &sInstance;
-} 
+}
 
 void DepthBuffer::OnNewFrame()
 {

@@ -17,6 +17,12 @@ void Rasterizer::SetFillMode(FillMode mode)
 {
 	mFillMode = mode;
 }
+
+void Rasterizer::SetShadeMode(ShadeMode mode)
+{
+	mShadeMode = mode;
+}
+
 void Rasterizer::DrawPoint(int x, int y)
 {
 	X::DrawPixel(x, y, mColor);
@@ -60,6 +66,17 @@ void Rasterizer::DrawLine(Vertex v1, Vertex v2)
 
 void Rasterizer::DrawTriangle(Vertex v1, Vertex v2, Vertex v3)
 {
+	if (mShadeMode == ShadeMode::Flat)
+	{
+		v2.color = v1.color;
+		v3.color = v1.color;
+		Vector3 faceNorm = MathHelper::Normalize(MathHelper::Cross((v2.position - v1.position),
+			(v3.position - v1.position)));
+		v1.normal = faceNorm;
+		v2.normal = faceNorm;
+		v3.normal = faceNorm;
+	}
+
 	if (mFillMode == FillMode::Wireframe)
 	{
 		DrawLine(v1, v2);
@@ -77,6 +94,10 @@ void Rasterizer::DrawTriangle(Vertex v1, Vertex v2, Vertex v3)
 	if (corners[1].position.y > corners[2].position.y)
 		std::swap(corners[1], corners[2]);
 
+
+	//lineLong = [0][2]
+	//lineShortA = [0][1]
+	//lineShortB = [1][2]
 	int dyLong = corners[2].position.y - corners[0].position.y;
 	int dyShort = corners[1].position.y - corners[0].position.y;
 	int dx{};
@@ -85,14 +106,14 @@ void Rasterizer::DrawTriangle(Vertex v1, Vertex v2, Vertex v3)
 	for (int i = 0; i <= abs(dyLong); ++i)
 	{
 		longSide = Vertex::LerpVertex(corners[0], corners[2], i / fabs(dyLong));
-		if (i <= dyShort) 
+		if (i <= dyShort) //1st sub-tri
 		{
-			if (dyShort == 0) shortSide = corners[1]; 
+			if (dyShort == 0) shortSide = corners[1]; // straight edge check
 			else shortSide = Vertex::LerpVertex(corners[0], corners[1], i / fabs(dyShort));
 		}
-		else 
+		else // 2nd sub-tri
 		{
-			if (dyLong - dyShort == 0) shortSide = corners[1];
+			if (dyLong - dyShort == 0) shortSide = corners[1];// straight edge check
 			else shortSide = Vertex::LerpVertex(corners[1], corners[2], (i - dyShort) / fabs(dyLong - dyShort));
 		}
 		dx = shortSide.position.x - longSide.position.x;
@@ -106,4 +127,9 @@ void Rasterizer::DrawTriangle(Vertex v1, Vertex v2, Vertex v3)
 X::Color Rasterizer::GetColor() const
 {
 	return mColor;
+}
+
+ShadeMode Rasterizer::GetShadeMode() const
+{
+	return mShadeMode;
 }

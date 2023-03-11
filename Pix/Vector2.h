@@ -1,19 +1,43 @@
 #pragma once
+#include <ostream>
 
-struct Vector2 {
-	float x, y;
-	Vector2() : x{ 0.0f }, y{ 0.0f }{}
-    Vector2(float s) : x{ s }, y{ s } { }
-	Vector2(float x, float y) : x{x}, y{y} {}
-	Vector2(const Vector2& v) : x{ v.x }, y {v.y } {}
-	Vector2 operator-() const { return Vector2(-x, -y); }
-	Vector2 operator+(const Vector2& rhs) const { return Vector2(x + rhs.x, y + rhs.y); }
-	Vector2 operator-(const Vector2& rhs) const { return Vector2(x - rhs.x, y - rhs.y); }
-	Vector2 operator*(float s)const { return Vector2(x * s, y * s); }
-	Vector2 operator/(float s)const { return Vector2(x / s, y / s); }
-	
-	Vector2& operator+=(const Vector2& rhs) { x += rhs.x; y += rhs.y; return *this; }
-	Vector2& operator-=(const Vector2& rhs) { x -= rhs.x; y -= rhs.y; return *this; }
-	Vector2& operator*=(float s) { x *= s; y*= s; return *this; }
-	Vector2& operator/=(float s) { x /= s; y /= s; return *this; }
+
+struct Vector2
+{
+	float x = 0.f;
+	float y = 0.f;
+
+	Vector2() {}
+	Vector2(float x, float y) : x(x), y(y) {}
+	virtual ~Vector2() = default;
+
+	friend std::ostream& operator<<(std::ostream& os, const Vector2& v2)
+	{
+		os << '[' << v2.x << ", " << v2.y << ']';
+		return os;
+	}
+
+	Vector2 operator+(const Vector2& other)
+	{
+		return { x + other.x, y + other.y };
+	}
+
+	Vector2 operator-(const Vector2& other)
+	{
+		return { x - other.x, y - other.y };
+	}
+
+	Vector2 operator*(const float& c)
+	{
+		return { x * c, y * c };
+	}
+
+	Vector2 operator/(const float& c)
+	{
+		if (c == 0)
+		{
+			return Vector2();
+		}
+		return { x / c, y / c };
+	}
 };

@@ -4,8 +4,16 @@
 
 class MatrixStack
 {
+	std::vector<Matrix4> mMatrices;
+	Matrix4 mCombinedTransfrom;
+
 public:
 	static MatrixStack* Get();
+
+private:
+	MatrixStack() {}
+
+public:
 	void OnNewFrame();
 	void PushTranslation(const Vector3 d);
 	void PushRotationX(const float rad);
@@ -17,6 +25,6 @@ public:
 	Matrix4 GetTransform() const { return mCombinedTransfrom; }
 
 private:
-	std::vector<Matrix4> mMatrices;
-	Matrix4 mCombinedTransfrom;
+	void GenerateCombinedMatrix();
 };
+

@@ -1,7 +1,5 @@
 #pragma once
-
 #include "Command.h"
-
 class CmdShowViewport : public Command
 {
 public:
@@ -13,10 +11,11 @@ public:
 	const char* GetDescription() override
 	{
 		return
-			"ShowViewport(show)\n"
+			"ShowViewport(bool)\n"
 			"\n"
-			"- Shows or hides the viewport";
+			"- Sets whether viewport is visible based on bool\n";
 	}
 
 	bool Execute(const std::vector<std::string>& params) override;
 };
+

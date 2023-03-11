@@ -1,9 +1,7 @@
 #include "CmdEndDraw.h"
-#include "PrimitivesManager.h"
+#include "PrimativeManager.h"
 
-bool CmdEndDraw::Execute(const std::vector<std::string>& params) {
-	if (params.size() > 0) {
-		return false;
-	}
-	return PrimitivesManager::Get()->EndDraw();
+bool CmdEndDraw::Execute(const std::vector<std::string>& params)
+{
+	return PrimativeManager::Get()->EndDraw();
 }

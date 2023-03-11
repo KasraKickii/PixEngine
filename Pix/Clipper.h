@@ -12,7 +12,9 @@ public:
 	static Clipper* Get();
 	~Clipper() {}
 
-	void OnNewFrame(); 
+	void OnNewFrame(); // call in Graphics::NewFrame
+
+	//Return true if clip test pass
 	bool ClipPoint(Vertex& v);
 	bool ClipLine(Vertex& v1, Vertex& v2);
 	bool ClipTriangle(std::vector<Vertex>& vertices);

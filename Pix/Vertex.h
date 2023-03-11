@@ -1,11 +1,11 @@
-#pragma once
+﻿#pragma once
 #include "Vector3.h"
 #include "XColors.h"
 
 struct Vertex
 {
     Vector3 position = { 0.f, 0.f, 0.f };
-    X::Color color = { 0.f, 0.f, 0.f, 0.f };
+    X::Color color = { 0.f, 0.f, 0.f, 0.f};
     Vector3 normal = { 0.f, 0.f, 1.f, };
     Vector3 worldPosition = { 0.f, 0.f, 0.f };
     Vector3 worldNormal = { 0.f, 0.f, 1.f, };

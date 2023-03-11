@@ -4,7 +4,7 @@
 
 bool CmdVarFloat::Execute(const std::vector<std::string>& params)
 {
-	// Need at leaset 3 params for name, =, value
+	// Need at least 3 params for name, =, value
 	if (params.size() < 3)
 		return false;
 
